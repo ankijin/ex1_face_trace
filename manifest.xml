@@ -1,0 +1,19 @@
+<package>
+  <description brief="ex1_face_trace">
+
+     ex1_face_trace
+
+  </description>
+  <author>kijin</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/ex1_face_trace</url>
+  <depend package="image_transport"/>
+  <depend package="roscpp"/>
+  <depend package="std_msgs"/>
+  <depend package="opencv2"/>
+  <depend package="cv_bridge"/>
+
+</package>
+
+

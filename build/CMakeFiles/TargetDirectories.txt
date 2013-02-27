@@ -1,0 +1,17 @@
+/home/kijin/workspace/ex1_face_trace/build/CMakeFiles/ROSBUILD_genmsg_cpp.dir
+/home/kijin/workspace/ex1_face_trace/build/CMakeFiles/ROSBUILD_genmsg_lisp.dir
+/home/kijin/workspace/ex1_face_trace/build/CMakeFiles/ROSBUILD_gensrv_cpp.dir
+/home/kijin/workspace/ex1_face_trace/build/CMakeFiles/ROSBUILD_gensrv_lisp.dir
+/home/kijin/workspace/ex1_face_trace/build/CMakeFiles/clean-test-results.dir
+/home/kijin/workspace/ex1_face_trace/build/CMakeFiles/ex_face_trace.dir
+/home/kijin/workspace/ex1_face_trace/build/CMakeFiles/example.dir
+/home/kijin/workspace/ex1_face_trace/build/CMakeFiles/rosbuild_precompile.dir
+/home/kijin/workspace/ex1_face_trace/build/CMakeFiles/rosbuild_premsgsrvgen.dir
+/home/kijin/workspace/ex1_face_trace/build/CMakeFiles/rospack_genmsg.dir
+/home/kijin/workspace/ex1_face_trace/build/CMakeFiles/rospack_genmsg_libexe.dir
+/home/kijin/workspace/ex1_face_trace/build/CMakeFiles/rospack_gensrv.dir
+/home/kijin/workspace/ex1_face_trace/build/CMakeFiles/test.dir
+/home/kijin/workspace/ex1_face_trace/build/CMakeFiles/test-future.dir
+/home/kijin/workspace/ex1_face_trace/build/CMakeFiles/test-results.dir
+/home/kijin/workspace/ex1_face_trace/build/CMakeFiles/test-results-run.dir
+/home/kijin/workspace/ex1_face_trace/build/CMakeFiles/tests.dir

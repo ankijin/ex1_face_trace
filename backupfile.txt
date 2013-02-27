@@ -1,0 +1,160 @@
+#include "cv.h"
+#include "highgui.h"
+#include <stdio.h>
+//#include "capture.h"
+#include "facedet.h"
+#include "camshift_wrapper.h"
+
+#include <message_filters/subscriber.h>
+#include <ros/ros.h>
+#include <image_transport/image_transport.h>
+#include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/image_encodings.h>
+#include <opencv2/imgproc/imgproc.hpp>
+
+
+#include "std_msgs/MultiArrayLayout.h"
+#include "std_msgs/MultiArrayDimension.h"
+#include "std_msgs/Int32MultiArray.h"
+
+
+//// Constants
+const char * DISPLAY_WINDOW = "DisplayWindow";
+#define OPENCV_ROOT  "C:/Program Files/OpenCV/1.0"
+namespace enc = sensor_msgs::image_encodings;
+
+//// Global variables
+IplImage  * pVideoFrameCopy = 0;
+CvRect * pFaceRect = 0;
+
+//// Function definitions
+int initAll();
+void exitProgram(int code);
+IplImage frame;
+
+int Arr[90];
+
+
+ros::Rate r(10);
+
+
+void face_detected_callback(const std_msgs::Int32MultiArray::ConstPtr& array){
+	std::cout <<"test ArrayCallback\n";
+//	int i = 0;
+	// print all the remaining numbers
+//	for(std::vector<int>::const_iterator it = array->data.begin(); it != array->data.end(); ++it)
+//	{
+		array->data[0];
+//		Arr[i] = *it;
+//		i++;
+		printf("[%d %d %d %d]",array->data[0],array->data[1],array->data[2],array->data[3]);
+//	}
+	printf("\n");
+
+	r.sleep();
+}
+
+
+
+
+void imageCb_rgb(const sensor_msgs::ImageConstPtr& msg)
+{
+	cv_bridge::CvImagePtr cv_ptr;
+	try{cv_ptr = cv_bridge::toCvCopy(msg, enc::BGR8);}
+	catch (cv_bridge::Exception& e){ROS_ERROR("cv_bridge exception: %s", e.what());return;}
+	frame = cv_ptr->image;
+	//	pVideoFrameCopy = &frame;
+	IplImage  * pVideoFrame;
+	pVideoFrame = &frame;
+	pVideoFrameCopy = cvCreateImage( cvGetSize(pVideoFrame), 8, 3 );
+	cvCopy( &frame, pVideoFrameCopy, 0 );
+	if(!pFaceRect){
+//		pFaceRect = detectFace(pVideoFrameCopy);
+		cvShowImage( DISPLAY_WINDOW, pVideoFrameCopy );
+		cv::waitKey(3);
+		printf("no face\n");
+	}else{
+		startTracking(pVideoFrameCopy, pFaceRect);
+		CvBox2D faceBox;
+
+		faceBox = track(pVideoFrameCopy);
+
+		// outline face ellipse
+		cvEllipseBox(pVideoFrameCopy, faceBox,
+				CV_RGB(255,0,0), 3, CV_AA, 0 );
+		cvShowImage( DISPLAY_WINDOW, pVideoFrameCopy );
+		cv::waitKey(3);
+		printf("detected face\n");
+	}
+}
+
+
+//////////////////////////////////
+// main()
+//
+
+
+int main( int argc, char** argv )
+{
+
+	 ros::init(argc, argv,"static_transform_publisher", ros::init_options::AnonymousName);
+	//	CvRect * pFaceRect = 0;
+	 ros::Time::init();
+	if( !initAll() ) exitProgram(-1);
+
+
+	ros::NodeHandle n;
+	ros::Subscriber sub3 = n.subscribe("/camera/rgb/image_color", 1, imageCb_rgb);
+//	ros::Subscriber sub = n.subscribe("/face_detected", 1, face_detected_callback);
+	ros::spin();
+	exitProgram(0);
+	return 0;
+}
+//////////////////////////////////
+// initAll()
+//
+int initAll()
+{
+	//	if( !initCapture() ) return 0;
+	if( !initFaceDet("ex1_face_trace/haarcascade_frontalface_default.xml"))
+		return 0;
+
+	// Startup message tells user how to begin and how to exit
+	printf( "\n********************************************\n"
+			"To exit, click inside the video display,\n"
+			"then press the ESC key\n\n"
+			"Press <ENTER> to begin"
+			"\n********************************************\n" );
+	fgetc(stdin);
+
+	// Create the display window
+	cvNamedWindow( DISPLAY_WINDOW, 1 );
+
+	// Initialize tracker
+	if( !createTracker(pVideoFrameCopy) ) return 0;
+
+	// Set Camshift parameters
+	setVmin(50);
+	setSmin(30);
+
+	return 1;
+}
+
+
+//////////////////////////////////
+// exitProgram()
+//
+void exitProgram(int code)
+{
+	// Release resources allocated in this file
+	cvDestroyWindow( DISPLAY_WINDOW );
+	cvReleaseImage( &pVideoFrameCopy );
+
+	// Release resources allocated in other project files
+	//	closeCapture();
+	closeFaceDet();
+	releaseTracker();
+
+	exit(code);
+}
+
